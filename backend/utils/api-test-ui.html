@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍦 Ganesh Kulfi API Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        .status-connected {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-disconnected {
+            background: #ef4444;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: scale(1.02);
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .result {
+            background: #f3f4f6;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .result.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .result.error {
+            border-left: 4px solid #ef4444;
+            color: #dc2626;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .product-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .product-card h4 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .product-card .price {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .product-card .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .token-display {
+            background: #fef3c7;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.85em;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍦 Ganesh Kulfi Backend API Tester</h1>
+            <p>Interactive testing interface for your PostgreSQL backend</p>
+            <div id="statusBadge" class="status-badge status-disconnected">
+                Checking connection...
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Health Check -->
+            <div class="card">
+                <h3>🏥 Health Check</h3>
+                <button class="btn btn-success" onclick="checkHealth()">Check Server Health</button>
+                <div id="healthResult" class="result" style="display:none;"></div>
+            </div>
+
+            <!-- Login -->
+            <div class="card">
+                <h3>🔐 Login</h3>
+                <select id="userType" onchange="switchUser()" style="margin-bottom:10px;">
+                    <option value="factory">Factory Owner</option>
+                    <option value="retailer">Retailer</option>
+                </select>
+                <input type="email" id="loginEmail" placeholder="Email" value="factory@ganeshkulfi.com">
+                <input type="password" id="loginPassword" placeholder="Password" value="factory123">
+                <button class="btn btn-primary" onclick="login()">Login</button>
+                <div id="loginResult" class="result" style="display:none;"></div>
+                <div id="tokenDisplay" class="token-display" style="display:none;"></div>
+            </div>
+
+            <!-- Get All Products -->
+            <div class="card">
+                <h3>🍦 All Products</h3>
+                <button class="btn btn-primary" onclick="getProducts()">Get All Products</button>
+                <div id="productsResult" class="result" style="display:none;"></div>
+                <div id="productsGrid" class="products-grid"></div>
+            </div>
+
+            <!-- Get Product by ID -->
+            <div class="card">
+                <h3>🔍 Get Product by ID</h3>
+                <select id="productId">
+                    <option value="mango">Mango Kulfi</option>
+                    <option value="chocolate">Chocolate Kulfi</option>
+                    <option value="strawberry">Strawberry Kulfi</option>
+                    <option value="paan">Paan Kulfi</option>
+                    <option value="dry_fruit">Dry Fruit Kulfi</option>
+                    <option value="rabdi">Rabadi Kulfi</option>
+                    <option value="gulkand">Gulkand Kulfi</option>
+                    <option value="pineapple">Pineapple Kulfi</option>
+                    <option value="chikoo">Chikoo Kulfi</option>
+                    <option value="guava">Guava Kulfi</option>
+                    <option value="jamun">Jamun Kulfi</option>
+                    <option value="sitafal">Sitafal Kulfi</option>
+                    <option value="fig">Fig Kulfi</option>
+                </select>
+                <button class="btn btn-primary" onclick="getProductById()">Get Product</button>
+                <div id="productResult" class="result" style="display:none;"></div>
+            </div>
+
+            <!-- Get Stock -->
+            <div class="card">
+                <h3>📦 Check Stock</h3>
+                <select id="stockProductId">
+                    <option value="mango">Mango Kulfi</option>
+                    <option value="chocolate">Chocolate Kulfi</option>
+                    <option value="strawberry">Strawberry Kulfi</option>
+                    <option value="paan">Paan Kulfi</option>
+                    <option value="dry_fruit">Dry Fruit Kulfi</option>
+                </select>
+                <button class="btn btn-warning" onclick="getStock()">Check Stock</button>
+                <div id="stockResult" class="result" style="display:none;"></div>
+            </div>
+
+            <!-- Stock History -->
+            <div class="card">
+                <h3>📊 Stock History</h3>
+                <select id="historyProductId">
+                    <option value="mango">Mango Kulfi</option>
+                    <option value="chocolate">Chocolate Kulfi</option>
+                    <option value="strawberry">Strawberry Kulfi</option>
+                </select>
+                <button class="btn btn-warning" onclick="getStockHistory()">Get History</button>
+                <div id="historyResult" class="result" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        let authToken = null;
+
+        // Auto-check health on load
+        window.onload = () => {
+            checkHealth();
+        };
+
+        async function checkHealth() {
+            const resultDiv = document.getElementById('healthResult');
+            const statusBadge = document.getElementById('statusBadge');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Checking...';
+
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                resultDiv.className = 'result success';
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+                statusBadge.className = 'status-badge status-connected';
+                statusBadge.textContent = '✅ Server Online';
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+                statusBadge.className = 'status-badge status-disconnected';
+                statusBadge.textContent = '❌ Server Offline';
+            }
+        }
+
+        function switchUser() {
+            const userType = document.getElementById('userType').value;
+            const emailInput = document.getElementById('loginEmail');
+            const passwordInput = document.getElementById('loginPassword');
+            
+            if (userType === 'factory') {
+                emailInput.value = 'factory@ganeshkulfi.com';
+                passwordInput.value = 'factory123';
+            } else {
+                emailInput.value = 'retailer@ganeshkulfi.com';
+                passwordInput.value = 'retailer123';
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const resultDiv = document.getElementById('loginResult');
+            const tokenDiv = document.getElementById('tokenDisplay');
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Logging in...';
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+                
+                if (data.success && data.data.token) {
+                    authToken = data.data.token;
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = JSON.stringify(data.data.user, null, 2);
+                    tokenDiv.style.display = 'block';
+                    tokenDiv.textContent = `🔑 Token: ${authToken.substring(0, 50)}...`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function getProducts() {
+            const resultDiv = document.getElementById('productsResult');
+            const gridDiv = document.getElementById('productsGrid');
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Loading products...';
+            gridDiv.innerHTML = '';
+
+            try {
+                const response = await fetch(`${API_BASE}/products`);
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `Found ${data.data.length} products`;
+
+                    data.data.forEach(product => {
+                        const card = document.createElement('div');
+                        card.className = 'product-card';
+                        card.innerHTML = `
+                            <h4>${product.name}</h4>
+                            <div class="price">₹${product.basePrice}</div>
+                            <div class="badge">${product.category}</div>
+                            ${product.isSeasonal ? '<div class="badge">🌸 Seasonal</div>' : ''}
+                            <div class="badge">Stock: ${product.stockQuantity}</div>
+                        `;
+                        gridDiv.appendChild(card);
+                    });
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function getProductById() {
+            const productId = document.getElementById('productId').value;
+            const resultDiv = document.getElementById('productResult');
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Loading...';
+
+            try {
+                const response = await fetch(`${API_BASE}/products/${productId}`);
+                const data = await response.json();
+                resultDiv.className = data.success ? 'result success' : 'result error';
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function getStock() {
+            const productId = document.getElementById('stockProductId').value;
+            const resultDiv = document.getElementById('stockResult');
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Checking stock...';
+
+            try {
+                const response = await fetch(`${API_BASE}/inventory/stock/${productId}`);
+                const data = await response.json();
+                resultDiv.className = data.success ? 'result success' : 'result error';
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+
+        async function getStockHistory() {
+            const productId = document.getElementById('historyProductId').value;
+            const resultDiv = document.getElementById('historyResult');
+
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.textContent = 'Loading history...';
+
+            try {
+                const response = await fetch(`${API_BASE}/inventory/history/${productId}?page=1&pageSize=10`);
+                const data = await response.json();
+                resultDiv.className = data.success ? 'result success' : 'result error';
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+    </script>
+</body>
+</html>

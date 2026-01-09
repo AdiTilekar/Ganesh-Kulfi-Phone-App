@@ -1,0 +1,52 @@
+# Docker Compose for Ganesh Kulfi Backend
+# Day 14: Production deployment setup
+
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: ganeshkulfi-db
+    environment:
+      POSTGRES_DB: ganeshkulfi_db
+      POSTGRES_USER: ganeshkulfi_user
+      POSTGRES_PASSWORD: Ganesh@123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ganeshkulfi_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    container_name: ganeshkulfi-backend
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/ganeshkulfi_db
+      DB_USER: ganeshkulfi_user
+      DB_PASSWORD: Ganesh@123
+      DB_POOL_SIZE: 10
+      JWT_SECRET: ganeshkulfi-jwt-secret-key-2024-change-in-production
+      JWT_ISSUER: http://localhost:8080
+      JWT_AUDIENCE: ganeshkulfi-users
+      APP_PORT: 8080
+      UPLOADS_DIR: uploads
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  postgres_data:

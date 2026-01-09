@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">श्री गणेश कुल्फी</string>
+    
+    <!-- Header -->
+    <string name="header_flavors">स्वाद</string>
+    <string name="header_about">हमारे बारे में</string>
+    <string name="header_contact">संपर्क करें</string>
+    <string name="header_order">ऑर्डर करें</string>
+    <string name="header_login">लॉगिन</string>
+    
+    <!-- Hero -->
+    <string name="hero_title">परंपरा का असली स्वाद</string>
+    <string name="hero_subtitle">श्री गणेश कुल्फी के समृद्ध, मलाईदार स्वाद का अनुभव करें, जो कोपरगांव में प्यार और पीढ़ियों की परंपरा के साथ बनाई गई है।</string>
+    <string name="hero_explore">स्वाद देखें</string>
+    <string name="hero_find_us">हमें खोजें</string>
+    
+    <!-- Flavor Showcase -->
+    <string name="flavor_showcase_title">स्वादों की सिम्फनी</string>
+    <string name="flavor_showcase_subtitle">प्रत्येक कुल्फी एक उत्कृष्ट कृति है, बेहतरीन सामग्री और जादू के स्पर्श से बनाई गई है।</string>
+    
+    <!-- Brand Story -->
+    <string name="brand_story_heritage">हमारी विरासत</string>
+    <string name="brand_story_title">मिठास की विरासत</string>
+    <string name="brand_story_p1">गणेश राउत द्वारा स्थापित, श्री गणेश कुल्फी सिर्फ एक मिठाई की दुकान नहीं है; यह पीढ़ियों से चली आ रही एक पोषित परंपरा है। हमारी यात्रा कोपरगांव के दिल में एक सरल मिशन के साथ शुरू हुई: हमारे समुदाय के साथ घर की बनी कुल्फी के प्रामाणिक, अविस्मरणीय स्वाद को साझा करना।</string>
+    <string name="brand_story_p2">हम केवल सबसे शुद्ध दूध, बेहतरीन मेवे और सुगंधित मसालों का उपयोग करते हैं, जिन्हें धीरे-धीरे मलाईदार पूर्णता तक मथा जाता है। हर निवाला गुणवत्ता के प्रति हमारी प्रतिबद्धता और महाराष्ट्र की समृद्ध सांस्कृतिक विरासत का प्रमाण है।</string>
+    
+    <!-- Common -->
+    <string name="add_to_cart">कार्ट में जोड़ें</string>
+    <string name="price">₹%1$d</string>
+    <string name="out_of_stock">स्टॉक में नहीं</string>
+    <string name="sign_in">साइन इन करें</string>
+    <string name="sign_up">साइन अप करें</string>
+    <string name="sign_out">साइन आउट करें</string>
+    <string name="loading">लोड हो रहा है...</string>
+    <string name="error">त्रुटि</string>
+</resources>

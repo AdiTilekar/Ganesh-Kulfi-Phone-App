@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">श्री गणेश कुल्फी</string>
+    
+    <!-- Header -->
+    <string name="header_flavors">चव</string>
+    <string name="header_about">आमच्याबद्दल</string>
+    <string name="header_contact">संपर्क करा</string>
+    <string name="header_order">ऑर्डर करा</string>
+    <string name="header_login">लॉगिन</string>
+    
+    <!-- Hero -->
+    <string name="hero_title">परंपरेची खरी चव</string>
+    <string name="hero_subtitle">श्री गणेश कुल्फीच्या समृद्ध, मलईदार आनंदाचा अनुभव घ्या, कोपरगावमध्ये प्रेमाने आणि पिढ्यानपिढ्यांच्या परंपरेने तयार केलेली.</string>
+    <string name="hero_explore">चव पहा</string>
+    <string name="hero_find_us">आम्हाला शोधा</string>
+    
+    <!-- Flavor Showcase -->
+    <string name="flavor_showcase_title">चवींची संगीत</string>
+    <string name="flavor_showcase_subtitle">प्रत्येक कुल्फी एक उत्कृष्ट नमुना आहे, उत्तम साहित्य आणि जादूच्या स्पर्शाने तयार केली आहे.</string>
+    
+    <!-- Brand Story -->
+    <string name="brand_story_heritage">आमचा वारसा</string>
+    <string name="brand_story_title">गोडव्याचा वारसा</string>
+    <string name="brand_story_p1">गणेश राऊत यांनी स्थापन केलेली, श्री गणेश कुल्फी ही केवळ एक मिठाईची दुकान नाही; ही पिढ्यानपिढ्या चालत आलेली एक प्रिय परंपरा आहे. आमचा प्रवास कोपरगावच्या हृदयात एका साध्या ध्येयासह सुरू झाला: आमच्या समुदायासह घरगुती कुल्फीची खरी, अविस्मरणीय चव सामायिक करणे.</string>
+    <string name="brand_story_p2">आम्ही फक्त सर्वात शुद्ध दूध, उत्तम ड्राय फ्रूट्स आणि सुगंधित मसाले वापरतो, मलईदार परिपूर्णतेपर्यंत हळूहळू मंथन केले जाते. प्रत्येक चावा गुणवत्तेप्रती आमच्या वचनबद्धतेचा आणि महाराष्ट्राच्या समृद्ध सांस्कृतिक वारशाचा पुरावा आहे.</string>
+    
+    <!-- Common -->
+    <string name="add_to_cart">कार्टमध्ये जोडा</string>
+    <string name="price">₹%1$d</string>
+    <string name="out_of_stock">स्टॉकमध्ये नाही</string>
+    <string name="sign_in">साइन इन करा</string>
+    <string name="sign_up">साइन अप करा</string>
+    <string name="sign_out">साइन आउट करा</string>
+    <string name="loading">लोड होत आहे...</string>
+    <string name="error">त्रुटी</string>
+</resources>

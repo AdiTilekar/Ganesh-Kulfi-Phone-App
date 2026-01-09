@@ -1,0 +1,14 @@
+# Nixpacks configuration for Railway.app deployment
+# This tells Railway how to build and run the Ganesh Kulfi backend
+
+[phases.setup]
+nixPkgs = ["openjdk21", "gradle"]
+
+[phases.build]
+cmds = [
+    "chmod +x gradlew",
+    "./gradlew clean shadowJar --no-daemon --console=plain"
+]
+
+[start]
+cmd = "java -Xms256m -Xmx512m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -jar build/libs/ganeshkulfi-backend-all.jar"
