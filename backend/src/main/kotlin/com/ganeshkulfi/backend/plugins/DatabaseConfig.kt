@@ -133,13 +133,16 @@ object DatabaseConfig {
             .baselineOnMigrate(true)
             .validateOnMigrate(false)  // Allow modified migrations (V2 was updated to match Android app)
             .load()
+
+        // Repair first: fixes checksum mismatches from modified migrations
+        // and removes failed migration entries so they can be re-attempted
+        flyway.repair()
         
         val migrationInfo = flyway.info()
         val pending = migrationInfo.pending().size
         
         if (pending > 0) {
             flyway.migrate()
-        } else {
         }
     }
 }

@@ -7,6 +7,16 @@
 --
 -- order_id and user_id remain UUID since orders.id and app_user.id are real UUIDs.
 
+-- Drop old UUID-parameter versions first (V6 created these with UUID product_id)
+DROP FUNCTION IF EXISTS get_available_quantity(UUID);
+DROP FUNCTION IF EXISTS reserve_stock_for_order(UUID, UUID, INTEGER, UUID);
+DROP FUNCTION IF EXISTS adjust_stock(UUID, INTEGER, TEXT, UUID);
+-- These two keep the same param types so CREATE OR REPLACE works, but drop for safety
+DROP FUNCTION IF EXISTS release_reserved_stock(UUID, UUID);
+DROP FUNCTION IF EXISTS deduct_confirmed_stock(UUID, UUID);
+-- Drop generate_order_number (return type changes from VARCHAR to TEXT)
+DROP FUNCTION IF EXISTS generate_order_number();
+
 -- Fix get_available_quantity: product_id should be VARCHAR, not UUID
 CREATE OR REPLACE FUNCTION get_available_quantity(p_product_id VARCHAR(36))
 RETURNS INTEGER AS $$
