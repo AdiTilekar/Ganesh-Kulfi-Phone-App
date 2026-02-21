@@ -19,24 +19,53 @@ object DatabaseConfig {
     fun init(environment: ApplicationEnvironment) {
         val config = environment.config
         
-        // Parse DATABASE_URL from Render or use application.conf
+        // --- resolve database coordinates -------------------------------------------
+        // Priority: DATABASE_URL  >  JDBC_DATABASE_URL  >  individual DB_* vars  >  application.conf
         val databaseUrl = System.getenv("DATABASE_URL")
-        val (jdbcUrl, user, password) = if (databaseUrl != null && databaseUrl.startsWith("postgres")) {
-            // Parse Render format: postgresql://user:password@host:port/database
-            val uri = java.net.URI(databaseUrl)
+            ?: System.getenv("JDBC_DATABASE_URL")
+
+        environment.log.info("🔍 DATABASE_URL present: ${databaseUrl != null}")
+
+        val (jdbcUrl, user, password) = if (!databaseUrl.isNullOrBlank() && databaseUrl.startsWith("postgres")) {
+            // Cloud format: postgres(ql)://user:password@host:port/database[?params]
+            // Strip scheme prefix for uniform parsing ("postgres://" → "postgresql://")
+            val normalized = if (databaseUrl.startsWith("postgresql://")) databaseUrl
+                             else databaseUrl.replaceFirst("postgres://", "postgresql://")
+            val uri = java.net.URI(normalized)
             val host = uri.host ?: throw IllegalArgumentException("Host is null in DATABASE_URL")
             val port = if (uri.port > 0) uri.port else 5432
-            val path = uri.path ?: throw IllegalArgumentException("Path is null in DATABASE_URL")
-            val userInfo = uri.userInfo?.split(":") ?: throw IllegalArgumentException("UserInfo is null in DATABASE_URL")
-            
-            val url = "jdbc:postgresql://$host:$port$path"
+            val path = uri.path?.takeIf { it.isNotBlank() } ?: throw IllegalArgumentException("DB name missing in DATABASE_URL")
+            val userInfo = uri.userInfo?.split(":", limit = 2)
+                ?: throw IllegalArgumentException("UserInfo (user:pass) missing in DATABASE_URL")
+
             val dbUser = userInfo.getOrNull(0) ?: throw IllegalArgumentException("Username not found in DATABASE_URL")
-            val dbPass = userInfo.getOrNull(1) ?: throw IllegalArgumentException("Password not found in DATABASE_URL")
-            
-            environment.log.info("✅ Parsed DATABASE_URL for migrations")
+            val dbPass = userInfo.getOrNull(1) ?: ""
+
+            // Preserve any query params (sslmode, etc.) from the original URL
+            val queryString = uri.rawQuery
+            val sslParam = if (queryString != null && "sslmode" in queryString) ""
+                           else "sslmode=require"   // Render requires SSL by default
+            val separator = if (queryString != null) "&" else "?"
+            val suffix = if (sslParam.isNotEmpty()) "$separator$sslParam" else ""
+            val url = "jdbc:postgresql://$host:$port$path${if (queryString != null) "?$queryString" else ""}$suffix"
+
+            environment.log.info("✅ Parsed DATABASE_URL → host=$host port=$port db=${path.removePrefix("/")}")
             Triple(url, dbUser, dbPass)
+
+        } else if (!System.getenv("DB_HOST").isNullOrBlank()) {
+            // Individual env-var override (works on any host without DATABASE_URL)
+            val host = System.getenv("DB_HOST")!!
+            val port = System.getenv("DB_PORT") ?: "5432"
+            val dbName = System.getenv("DB_NAME") ?: "ganeshkulfi_db"
+            val dbUser = System.getenv("DB_USER") ?: "ganeshkulfi_user"
+            val dbPass = System.getenv("DB_PASSWORD") ?: ""
+            val url = "jdbc:postgresql://$host:$port/$dbName"
+
+            environment.log.info("📝 Using DB_HOST env vars → host=$host port=$port db=$dbName")
+            Triple(url, dbUser, dbPass)
+
         } else {
-            // Read database config from application.conf (local development)
+            // Fallback: application.conf (local development only)
             val host = config.property("database.host").getString()
             val port = config.property("database.port").getString()
             val dbName = config.property("database.name").getString()
@@ -44,7 +73,8 @@ object DatabaseConfig {
             val dbPass = config.property("database.password").getString()
             
             val url = "jdbc:postgresql://$host:$port/$dbName"
-            environment.log.info("📝 Using application.conf for database config")
+            environment.log.warn("⚠️ No DATABASE_URL or DB_HOST found — falling back to application.conf (localhost). " +
+                "Set DATABASE_URL on your cloud host!")
             Triple(url, dbUser, dbPass)
         }
         
@@ -79,8 +109,9 @@ object DatabaseConfig {
             this.maximumPoolSize = maxPoolSize
             this.driverClassName = driverClass
             
-            // Connection pool settings
-            this.connectionTimeout = 30000 // 30 seconds
+            // Connection pool settings — generous timeouts for cold-start cloud DBs
+            this.connectionTimeout = 60000  // 60 seconds (Render free-tier DB can be slow to wake)
+            this.initializationFailTimeout = 120000  // 2 minutes: retry during cold-start
             this.idleTimeout = 600000 // 10 minutes
             this.maxLifetime = 1800000 // 30 minutes
             
