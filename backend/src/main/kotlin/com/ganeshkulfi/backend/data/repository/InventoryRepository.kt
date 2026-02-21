@@ -113,7 +113,13 @@ class InventoryRepository {
      */
     fun reserveStockForOrder(orderId: String, productId: String, quantity: Int, userId: String): Boolean = transaction {
         var success = false
-        exec("SELECT reserve_stock_for_order('$orderId'::uuid, '$productId'::uuid, $quantity, '$userId'::uuid)") { rs ->
+        val conn = this.connection.connection as java.sql.Connection
+        conn.prepareStatement("SELECT reserve_stock_for_order(?::uuid, ?, ?, ?::uuid)").use { stmt ->
+            stmt.setString(1, orderId)
+            stmt.setString(2, productId)
+            stmt.setInt(3, quantity)
+            stmt.setString(4, userId)
+            val rs = stmt.executeQuery()
             if (rs.next()) {
                 success = rs.getBoolean(1)
             }
@@ -125,32 +131,38 @@ class InventoryRepository {
      * Release reserved stock (using database function)
      */
     fun releaseReservedStock(orderId: String, userId: String) = transaction {
-        exec("SELECT release_reserved_stock('$orderId'::uuid, '$userId'::uuid)")
+        val conn = this.connection.connection as java.sql.Connection
+        conn.prepareStatement("SELECT release_reserved_stock(?::uuid, ?::uuid)").use { stmt ->
+            stmt.setString(1, orderId)
+            stmt.setString(2, userId)
+            stmt.executeQuery()
+        }
     }
     
     /**
      * Deduct confirmed stock (using database function)
      */
     fun deductConfirmedStock(orderId: String, userId: String) = transaction {
-        exec("SELECT deduct_confirmed_stock('$orderId'::uuid, '$userId'::uuid)")
+        val conn = this.connection.connection as java.sql.Connection
+        conn.prepareStatement("SELECT deduct_confirmed_stock(?::uuid, ?::uuid)").use { stmt ->
+            stmt.setString(1, orderId)
+            stmt.setString(2, userId)
+            stmt.executeQuery()
+        }
     }
     
     /**
      * Adjust stock manually (using database function)
-     * 
-     * NOTE: Uses string interpolation with manual escaping for reason parameter.
-     * UUIDs and integers are safe from injection. The reason parameter uses
-     * single-quote escaping ('' becomes '). This is acceptable here because:
-     * 1. Input comes from authenticated admin users only
-     * 2. Database function validates/sanitizes the reason parameter
-     * 3. Exposed ORM doesn't support parameter binding for stored procedure calls
-     * 
-     * For additional security, consider validating reason length/content before calling.
      */
     fun adjustStock(productId: String, quantityChange: Int, reason: String, userId: String) = transaction {
-        // Validate reason to prevent extremely long inputs
-        val sanitizedReason = reason.take(500).replace("'", "''")
-        exec("SELECT adjust_stock('$productId'::uuid, $quantityChange, '$sanitizedReason', '$userId'::uuid)")
+        val conn = this.connection.connection as java.sql.Connection
+        conn.prepareStatement("SELECT adjust_stock(?, ?, ?, ?::uuid)").use { stmt ->
+            stmt.setString(1, productId)
+            stmt.setInt(2, quantityChange)
+            stmt.setString(3, reason.take(500))
+            stmt.setString(4, userId)
+            stmt.executeQuery()
+        }
     }
     
     /**
@@ -158,7 +170,10 @@ class InventoryRepository {
      */
     fun getAvailableQuantity(productId: String): Int = transaction {
         var available = 0
-        exec("SELECT get_available_quantity('$productId'::uuid)") { rs ->
+        val conn = this.connection.connection as java.sql.Connection
+        conn.prepareStatement("SELECT get_available_quantity(?)").use { stmt ->
+            stmt.setString(1, productId)
+            val rs = stmt.executeQuery()
             if (rs.next()) {
                 available = rs.getInt(1)
             }

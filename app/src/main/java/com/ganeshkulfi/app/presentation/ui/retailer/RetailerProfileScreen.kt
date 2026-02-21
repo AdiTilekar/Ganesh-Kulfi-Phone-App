@@ -469,7 +469,7 @@ fun getTierColor(tierName: String): Color {
     return when (tierName.uppercase()) {
         "GOLD" -> Color(0xFFFFD700)
         "SILVER" -> Color(0xFFC0C0C0)
-        "PLATINUM" -> Color(0xFFE5E4E2)
+        "BASIC" -> MaterialTheme.colorScheme.tertiary
         else -> MaterialTheme.colorScheme.tertiary
     }
 }

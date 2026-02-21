@@ -104,9 +104,11 @@ data class OrderResponse(
     val confirmedAt: String? = null,
     val rejectedAt: String? = null,
     val completedAt: String? = null,
+    val cancelledAt: String? = null,
     
     val confirmedBy: String? = null,
     val rejectedBy: String? = null,
+    val cancelledBy: String? = null,
     
     val items: List<OrderItemResponse>
 ) {
@@ -136,8 +138,10 @@ data class OrderResponse(
                 confirmedAt = order.confirmedAt?.toString(),
                 rejectedAt = order.rejectedAt?.toString(),
                 completedAt = order.completedAt?.toString(),
+                cancelledAt = order.cancelledAt?.toString(),
                 confirmedBy = order.confirmedBy,
                 rejectedBy = order.rejectedBy,
+                cancelledBy = order.cancelledBy,
                 items = order.items.map { OrderItemResponse.fromOrderItem(it) }
             )
         }

@@ -1,5 +1,13 @@
 package com.ganeshkulfi.app.data.model
 
+/**
+ * Kulfi flavor product data.
+ *
+ * Note: Hindi (nameHi/descriptionHi) and Marathi (nameMr/descriptionMr) strings
+ * are hardcoded here as product catalog data. This is intentional — flavor names
+ * are domain data, not UI chrome. When the product catalog is served from the backend,
+ * these local defaults can be removed.
+ */
 data class Flavor(
     val id: String = "",
     val key: String = "",

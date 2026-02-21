@@ -1,6 +1,8 @@
 package com.ganeshkulfi.app.data.repository
 
 import android.content.SharedPreferences
+import android.util.Log
+import com.ganeshkulfi.app.BuildConfig
 import com.ganeshkulfi.app.data.model.User
 import com.ganeshkulfi.app.data.model.UserRole
 import com.ganeshkulfi.app.data.model.PricingTier
@@ -175,7 +177,7 @@ class AuthRepository @Inject constructor(
                 putString(KEY_PHONE, phone)
                 putString(KEY_ROLE, user.role.name)
                 putString(KEY_STORED_EMAIL, email)
-                putString(KEY_PASSWORD, password) // In production, use proper encryption
+                // SECURITY: Never store passwords locally — auth token is sufficient
                 apply()
             }
 
@@ -239,7 +241,7 @@ class AuthRepository @Inject constructor(
                 putString(KEY_PRICING_TIER, pricingTier.name)
 
                 putString(KEY_STORED_EMAIL, email)
-                putString(KEY_PASSWORD, password) // In production, encrypt
+                // SECURITY: Never store passwords locally — auth token is sufficient
                 apply()
             }
 
@@ -269,12 +271,12 @@ class AuthRepository @Inject constructor(
                     return@withContext Result.failure(Exception("Invalid email or password too short"))
                 }
 
-                println("🔐 Attempting to create retailer account: $email")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Attempting to create retailer account: $email")
                 
                 // Get admin auth token
                 val adminToken = getAuthToken()
                 if (adminToken == null) {
-                    println("❌ ERROR: No admin auth token available")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "No admin auth token available")
                     return@withContext Result.failure(Exception("Admin authentication required"))
                 }
                 
@@ -297,33 +299,25 @@ class AuthRepository @Inject constructor(
                     tier = tier
                 )
                 
-                println("📤 Sending create user request:")
-                println("   Email: $email")
-                println("   Role: RETAILER")
-                println("   RetailerId: $retailerId")
-                println("   ShopName: $shopName")
-                println("   Tier: $tier")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Creating retailer: email=$email, retailerId=$retailerId, shopName=$shopName, tier=$tier")
                 
                 val response = apiService.createUser("Bearer $adminToken", createUserRequest)
                 
-                println("📥 Backend response code: ${response.code()}, successful: ${response.isSuccessful}")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Backend response code: ${response.code()}, successful: ${response.isSuccessful}")
                 
                 if (!response.isSuccessful) {
                     val errorBody = response.errorBody()?.string()
-                    println("❌ ERROR: User creation failed - Status: ${response.code()}, Error: $errorBody")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "User creation failed - Status: ${response.code()}, Error: $errorBody")
                     return@withContext Result.failure(Exception("Failed to create retailer: ${response.code()} - $errorBody"))
                 }
                 
                 if (response.body()?.success != true) {
                     val message = response.body()?.message ?: "Unknown error"
-                    println("❌ ERROR: Backend returned success=false - Message: $message")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "Backend returned success=false - Message: $message")
                     return@withContext Result.failure(Exception("Backend error: $message"))
                 }
 
-                println("✅ SUCCESS: Retailer account created successfully on backend")
-                println("   Email: $email")
-                println("   Password: ${password.take(3)}***")
-                println("   Retailer can now login with these credentials!")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Retailer account created successfully: $email")
                 
                 // Store credentials locally for reference
                 val credentialKey = "retailer_cred_$email"
@@ -340,11 +334,10 @@ class AuthRepository @Inject constructor(
                     apply()
                 }
 
-                println("SUCCESS: Credentials stored locally")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Credentials stored locally")
                 Result.success(Unit)
             } catch (e: Exception) {
-                println("EXCEPTION: Registration failed - ${e.message}")
-                android.util.Log.e("AuthRepository", "Registration exception", e)
+                Log.e(TAG, "Registration failed: ${e.message}", e)
                 Result.failure(e)
             }
         }
@@ -388,22 +381,11 @@ class AuthRepository @Inject constructor(
                 )
                 
                 // Save user session
-                println("════════════════════════════════════════════")
-                println("💾 SAVING USER SESSION in AuthRepository.signIn()")
-                println("   User: ${user.email}")
-                println("   Role: ${user.role}")
-                println("   Token length: ${authData.token.length}")
-                println("   Token preview: ${authData.token.take(30)}...")
-                
-                // Log retailer-specific data BEFORE saving
-                if (user.role == UserRole.RETAILER) {
-                    println("🏪 RETAILER LOGIN DETECTED:")
-                    println("   retailerId from backend: ${userDto.retailerId}")
-                    println("   shopName from backend: ${userDto.shopName}")
-                    println("   tier from backend: ${userDto.tier}")
-                    println("   retailerId in User object: ${user.retailerId}")
-                    println("   shopName in User object: ${user.shopName}")
-                    println("   pricingTier in User object: ${user.pricingTier}")
+                if (BuildConfig.DEBUG) {
+                    Log.d(TAG, "Saving user session: email=${user.email}, role=${user.role}")
+                    if (user.role == UserRole.RETAILER) {
+                        Log.d(TAG, "Retailer login: retailerId=${user.retailerId}, shopName=${user.shopName}, tier=${user.pricingTier}")
+                    }
                 }
                 
                 with(sharedPreferences.edit()) {
@@ -417,18 +399,18 @@ class AuthRepository @Inject constructor(
                     if (user.role == UserRole.RETAILER) {
                         user.retailerId?.let { 
                             putString(KEY_RETAILER_ID, it)
-                            println("   ✅ Saved KEY_RETAILER_ID: $it")
-                        } ?: println("   ⚠️ WARNING: retailerId is NULL!")
+                        }
+                        if (user.retailerId == null && BuildConfig.DEBUG) Log.w(TAG, "retailerId is NULL")
                         
                         user.shopName?.let { 
                             putString(KEY_SHOP_NAME, it)
-                            println("   ✅ Saved KEY_SHOP_NAME: $it")
-                        } ?: println("   ⚠️ WARNING: shopName is NULL!")
+                        }
+                        if (user.shopName == null && BuildConfig.DEBUG) Log.w(TAG, "shopName is NULL")
                         
                         user.pricingTier?.let { 
                             putString(KEY_PRICING_TIER, it.name)
-                            println("   ✅ Saved KEY_PRICING_TIER: ${it.name}")
-                        } ?: println("   ⚠️ WARNING: pricingTier is NULL!")
+                        }
+                        if (user.pricingTier == null && BuildConfig.DEBUG) Log.w(TAG, "pricingTier is NULL")
                     } else {
                         // Clear retailer data for non-retailer users
                         remove(KEY_RETAILER_ID)
@@ -440,23 +422,10 @@ class AuthRepository @Inject constructor(
                     commit()  // Use commit() instead of apply() to ensure synchronous write
                 }
                 
-                // Verify token was saved
-                val savedToken = sharedPreferences.getString(KEY_AUTH_TOKEN, null)
-                println("✅ Token saved successfully: ${savedToken != null}")
-                println("   Saved token length: ${savedToken?.length ?: 0}")
-                println("   Tokens match: ${savedToken == authData.token}")
-                
-                // Verify retailer data was saved
-                if (user.role == UserRole.RETAILER) {
-                    val savedRetailerId = sharedPreferences.getString(KEY_RETAILER_ID, null)
-                    val savedShopName = sharedPreferences.getString(KEY_SHOP_NAME, null)
-                    val savedTier = sharedPreferences.getString(KEY_PRICING_TIER, null)
-                    println("🔍 VERIFICATION - Data actually saved:")
-                    println("   Saved retailerId: $savedRetailerId")
-                    println("   Saved shopName: $savedShopName")
-                    println("   Saved tier: $savedTier")
+                if (BuildConfig.DEBUG) {
+                    val tokenSaved = sharedPreferences.getString(KEY_AUTH_TOKEN, null) != null
+                    Log.d(TAG, "Token saved: $tokenSaved")
                 }
-                println("════════════════════════════════════════════")
                 
                 // Clear logout flag on successful login
                 sharedPreferences.edit().putBoolean(KEY_HAS_LOGGED_OUT, false).commit()
@@ -468,7 +437,7 @@ class AuthRepository @Inject constructor(
                 Result.failure(Exception(errorMessage))
             }
         } catch (e: Exception) {
-            android.util.Log.e("AuthRepository", "Sign-in failed", e)
+            Log.e(TAG, "Sign-in failed", e)
             val errorMsg = when (e) {
                 is java.net.UnknownHostException -> "Cannot connect to server. Check internet connection."
                 is java.net.SocketTimeoutException -> "Connection timeout. Server may be slow or unavailable."
@@ -503,7 +472,6 @@ class AuthRepository @Inject constructor(
             remove(KEY_PRICING_TIER)
             remove(KEY_AUTH_TOKEN)
             remove(KEY_STORED_EMAIL)
-            remove(KEY_PASSWORD)
             // KEY_HAS_LOGGED_OUT is NOT removed - it stays set to true
             commit()
         }
@@ -672,6 +640,7 @@ class AuthRepository @Inject constructor(
     }
 
     companion object {
+        private const val TAG = "AuthRepository"
         // SharedPreferences keys
         private const val KEY_USER_ID = "user_id"
         private const val KEY_EMAIL = "email"
@@ -679,7 +648,6 @@ class AuthRepository @Inject constructor(
         private const val KEY_PHONE = "phone"
         private const val KEY_ROLE = "role"
         private const val KEY_STORED_EMAIL = "stored_email"
-        private const val KEY_PASSWORD = "password"
         private const val KEY_IS_GUEST = "is_guest"
         private const val KEY_RETAILER_ID = "retailer_id"
         private const val KEY_SHOP_NAME = "shop_name"

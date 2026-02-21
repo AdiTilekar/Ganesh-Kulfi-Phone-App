@@ -13,7 +13,9 @@ enum class UserRole {
     ADMIN,      // Factory owner - full access
     RETAILER,   // Bulk buyer - can place orders
     CUSTOMER,   // End user - can buy products
-    GUEST       // Temporary user
+
+    @Deprecated("GUEST role is unused — app uses separate guest logic via AuthRepository.isGuestUser()")
+    GUEST       // Temporary user — not used by any backend code path
 }
 
 /**

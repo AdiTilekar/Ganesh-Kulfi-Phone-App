@@ -90,23 +90,6 @@ fun AdminOrdersScreen(
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(8.dp))
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        )
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text(
-                                "💡 Tip:",
-                                style = MaterialTheme.typography.labelMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                "Go back and log in with:\nadmin@ganeshkulfi.com\nPassword: Admin@123",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                    }
                     Button(onClick = onBackClick) {
                         Text("Go Back")
                     }
@@ -447,44 +430,6 @@ fun AdminOrdersScreen(
                         Icon(Icons.Default.Refresh, contentDescription = null)
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("Refresh Orders")
-                    }
-                    
-                    // Debug Info
-                    Card(
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(12.dp)
-                        ) {
-                            Text(
-                                "Debug Info:",
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                "Backend: http://10.242.116.68:8080",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                            Text(
-                                "Token: ${if (authToken.length > 20) "Valid (${authToken.length} chars)" else "Missing or Invalid"}",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                            Text(
-                                "Backend Orders: ${backendOrders.size}",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                            Text(
-                                "UI Orders: ${orders.size}",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                            Text(
-                                "Loading: $isLoading",
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
                     }
                 }
             }

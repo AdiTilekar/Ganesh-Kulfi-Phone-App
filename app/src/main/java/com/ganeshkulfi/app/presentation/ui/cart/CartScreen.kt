@@ -1,5 +1,10 @@
 package com.ganeshkulfi.app.presentation.ui.cart
 
+// TODO(feature): Customer cart — this screen is a placeholder stub.
+//  The customer role flow (HomeScreen → CartScreen → Profile) is wired
+//  in NavGraph but not implemented. Implement or redirect to RetailerCart
+//  when customer ordering is enabled.
+
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*

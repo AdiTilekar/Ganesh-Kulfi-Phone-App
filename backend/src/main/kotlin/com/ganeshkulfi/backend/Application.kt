@@ -1,6 +1,5 @@
 package com.ganeshkulfi.backend
 
-import com.ganeshkulfi.backend.config.DatabaseFactory
 import com.ganeshkulfi.backend.config.configureLogging
 import com.ganeshkulfi.backend.data.repository.UserRepository
 import com.ganeshkulfi.backend.data.repository.ProductRepository
@@ -40,6 +39,10 @@ import java.io.File
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.module() {
+    // TODO(versioning): All routes currently use /api/... without a version prefix.
+    //  When introducing breaking API changes, add /api/v2/... routes and keep
+    //  /api/... as v1 alias for backward compatibility.
+    
     // Print startup banner
     printBanner()
     
@@ -50,12 +53,8 @@ fun Application.module() {
         uploadsDir.mkdirs()
     }
     
-    // Day 14: Initialize database with HikariCP connection pool
-    log.info("🔧 Initializing database connection pool...")
-    DatabaseFactory.init()
-    
-    // Run Flyway migrations
-    log.info("🔧 Running database migrations...")
+    // Initialize database with HikariCP connection pool + run Flyway migrations
+    log.info("🔧 Initializing database connection pool and running migrations...")
     DatabaseConfig.init(environment)
     
     // Initialize services

@@ -345,8 +345,11 @@ class OrderRepository {
      */
     fun getTopProducts(limit: Int = 10): List<Map<String, Any>> = transaction {
         val results = mutableListOf<Map<String, Any>>()
+        // Clamp limit to a safe range to prevent abuse (already an Int, so no injection risk)
+        val safeLimit = limit.coerceIn(1, 100)
         
-        exec("""
+        val conn = this.connection.connection as java.sql.Connection
+        conn.prepareStatement("""
             SELECT 
                 oi.product_id,
                 oi.product_name,
@@ -358,17 +361,19 @@ class OrderRepository {
             WHERE o.status = 'CONFIRMED'
             GROUP BY oi.product_id, oi.product_name
             ORDER BY total_quantity DESC
-            LIMIT $limit
-        """) { rs ->
-            while (rs.next()) {
-                results.add(mapOf(
-                    "productId" to rs.getString("product_id"),
-                    "productName" to rs.getString("product_name"),
-                    "totalQuantitySold" to rs.getInt("total_quantity"),
-                    "totalOrders" to rs.getInt("total_orders"),
-                    "totalRevenue" to rs.getDouble("total_revenue")
-                ))
-            }
+            LIMIT ?
+        """).use { stmt ->
+        stmt.setInt(1, safeLimit)
+        val rs = stmt.executeQuery()
+        while (rs.next()) {
+            results.add(mapOf(
+                "productId" to rs.getString("product_id"),
+                "productName" to rs.getString("product_name"),
+                "totalQuantitySold" to rs.getInt("total_quantity"),
+                "totalOrders" to rs.getInt("total_orders"),
+                "totalRevenue" to rs.getDouble("total_revenue")
+            ))
+        }
         }
         
         results
@@ -379,8 +384,10 @@ class OrderRepository {
      */
     fun getTopRetailers(limit: Int = 10): List<Map<String, Any>> = transaction {
         val results = mutableListOf<Map<String, Any>>()
+        val safeLimit = limit.coerceIn(1, 100)
         
-        exec("""
+        val conn = this.connection.connection as java.sql.Connection
+        conn.prepareStatement("""
             SELECT 
                 retailer_id,
                 retailer_name,
@@ -392,8 +399,10 @@ class OrderRepository {
             WHERE status = 'CONFIRMED'
             GROUP BY retailer_id, retailer_name, retailer_email, shop_name
             ORDER BY total_orders DESC
-            LIMIT $limit
-        """) { rs ->
+            LIMIT ?
+        """).use { stmt ->
+            stmt.setInt(1, safeLimit)
+            val rs = stmt.executeQuery()
             while (rs.next()) {
                 results.add(mapOf(
                     "retailerId" to rs.getString("retailer_id"),

@@ -47,6 +47,14 @@ class OrderService(
             if (request.items.isEmpty()) {
                 return Result.failure(Exception("Order must contain at least one item"))
             }
+            if (request.items.size > 50) {
+                return Result.failure(Exception("Order cannot contain more than 50 items"))
+            }
+
+            // Sanitize optional notes (strip HTML tags, cap length)
+            val sanitizedNotes = request.retailerNotes
+                ?.replace(Regex("<[^>]*>"), "")  // strip HTML tags
+                ?.take(500)                        // cap at 500 chars
             
             // Day 9: Validate and calculate prices using PricingService
             val validatedItems = mutableListOf<Triple<String, Int, Double>>()
@@ -55,6 +63,9 @@ class OrderService(
                 // Validate quantity
                 if (item.quantity <= 0) {
                     return Result.failure(Exception("Quantity must be positive for ${item.productName}"))
+                }
+                if (item.quantity > 10_000) {
+                    return Result.failure(Exception("Quantity cannot exceed 10,000 for ${item.productName}"))
                 }
                 
                 // Get product from database for server-side validation
@@ -103,7 +114,7 @@ class OrderService(
                 retailerName = retailerName,
                 shopName = shopName,
                 items = validatedItems,
-                retailerNotes = request.retailerNotes,
+                retailerNotes = sanitizedNotes,
                 idempotencyKey = idempotencyKey
             )
             
@@ -211,28 +222,8 @@ class OrderService(
                 return Result.failure(Exception("Rejection reason is required"))
             }
             
-            // Automatic stock reduction when confirming or delivering order
-            // Only reduce stock when transitioning TO confirmed/delivered (not if already in that state)
-            if ((newStatus == OrderStatus.CONFIRMED || newStatus == OrderStatus.DELIVERED) && 
-                currentStatus != OrderStatus.CONFIRMED && currentStatus != OrderStatus.DELIVERED) {
-                
-                
-                // Get order items
-                val orderItems = orderRepository.getOrderItems(orderId)
-                
-                // Reduce stock for each item
-                orderItems.forEach { item ->
-                    try {
-                        val product = productRepository.findById(item.productId)
-                        if (product != null) {
-                            val newStock = (product.stockQuantity - item.quantity).coerceAtLeast(0)
-                            productRepository.updateProductStock(item.productId, newStock)
-                        } else {
-                        }
-                    } catch (e: Exception) {
-                    }
-                }
-            }
+            // NOTE: Stock reduction is handled exclusively by FactoryOrderStatusRoutes
+            // to prevent double-deduction. Do NOT add stock reduction logic here.
             
             // Update order status in database
             val updatedOrder = orderRepository.updateStatus(

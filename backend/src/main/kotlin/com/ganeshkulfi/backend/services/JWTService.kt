@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.ganeshkulfi.backend.data.models.UserRole
 import io.ktor.server.config.*
+import org.slf4j.LoggerFactory
 import java.util.*
 
 /**
@@ -12,8 +13,15 @@ import java.util.*
  * Handles JWT token generation and validation
  */
 class JWTService(config: ApplicationConfig) {
+
+    private val log = LoggerFactory.getLogger(JWTService::class.java)
     
-    private val secret = config.property("jwt.secret").getString()
+    private val secret: String = config.property("jwt.secret").getString().also { s ->
+        require(s.isNotBlank()) { "JWT_SECRET environment variable must be set" }
+        if (s == "CHANGE-ME-IN-PRODUCTION") {
+            log.warn("⚠️  Using default JWT secret. Set JWT_SECRET env var in production!")
+        }
+    }
     private val issuer = config.property("jwt.issuer").getString()
     private val audience = config.property("jwt.audience").getString()
     private val realm = config.property("jwt.realm").getString()

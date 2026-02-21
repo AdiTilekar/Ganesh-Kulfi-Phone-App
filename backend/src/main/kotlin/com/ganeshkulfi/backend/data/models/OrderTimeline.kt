@@ -8,6 +8,13 @@ import java.util.UUID
 /**
  * Day 11: Order Timeline Table
  * Tracks all status changes for orders with detailed history
+ *
+ * TODO(tech-debt): This table overlaps with order_status_history (V9).
+ *  Both have active DB triggers on orders.status changes, so every update
+ *  writes to BOTH tables. Consider merging:
+ *    - Add `old_status`, `changed_by`, `reason` columns here, OR
+ *    - Add `message`, `notification_sent` to order_status_history,
+ *  then drop the redundant table + trigger.
  */
 object OrderTimelines : UUIDTable("order_timeline") {
     val orderId = uuid("order_id").references(Orders.id)

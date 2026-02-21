@@ -106,6 +106,7 @@ fun Route.orderRoutes(orderService: OrderService, userService: UserService) {
             /**
              * GET /api/orders/my
              * Get my orders (Retailer)
+             * Optional query params: ?limit=100 (default 200, max 500)
              */
             get("/my") {
                 try {
@@ -131,7 +132,10 @@ fun Route.orderRoutes(orderService: OrderService, userService: UserService) {
                     }
                     
                     orderService.getRetailerOrders(userId).fold(
-                        onSuccess = { orders ->
+                        onSuccess = { allOrders ->
+                            // Apply basic limit to prevent unbounded responses
+                            val limit = (call.request.queryParameters["limit"]?.toIntOrNull() ?: 200).coerceIn(1, 500)
+                            val orders = allOrders.take(limit)
                             call.respond(
                                 HttpStatusCode.OK,
                                 ApiResponse(

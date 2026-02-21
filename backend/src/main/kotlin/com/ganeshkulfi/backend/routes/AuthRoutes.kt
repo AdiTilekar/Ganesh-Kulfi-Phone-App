@@ -1,6 +1,7 @@
 package com.ganeshkulfi.backend.routes
 
 import com.ganeshkulfi.backend.data.dto.*
+import com.ganeshkulfi.backend.plugins.RateLimitPlugin
 import com.ganeshkulfi.backend.services.UserService
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -17,6 +18,9 @@ import io.ktor.server.routing.*
 fun Route.authRoutes(userService: UserService) {
     
     route("/api/auth") {
+
+        // Rate-limit login & register to prevent brute-force / credential-stuffing
+        install(RateLimitPlugin)
         
         /**
          * POST /api/auth/register

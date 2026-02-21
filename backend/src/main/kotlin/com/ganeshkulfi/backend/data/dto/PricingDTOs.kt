@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreatePriceOverrideRequest(
     val productId: String,  // UUID string
-    val tier: String, // BASIC, SILVER, GOLD, PLATINUM
+    val tier: String, // BASIC, SILVER, GOLD
     val overridePrice: Double
 )
 

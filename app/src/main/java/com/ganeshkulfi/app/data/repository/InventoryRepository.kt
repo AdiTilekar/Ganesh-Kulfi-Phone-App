@@ -1,9 +1,12 @@
 package com.ganeshkulfi.app.data.repository
 
 import android.content.SharedPreferences
+import android.util.Log
+import com.ganeshkulfi.app.BuildConfig
 import com.ganeshkulfi.app.data.model.Flavor
 import com.ganeshkulfi.app.data.model.InventoryItem
 import com.ganeshkulfi.app.data.remote.ApiService
+import com.ganeshkulfi.app.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -20,9 +23,9 @@ import javax.inject.Singleton
 @Singleton
 class InventoryRepository @Inject constructor(
     private val apiService: ApiService,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    @ApplicationScope private val repositoryScope: CoroutineScope
 ) {
-    private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     
     private val _inventory = MutableStateFlow<List<InventoryItem>>(emptyList())
     val inventoryFlow: Flow<List<InventoryItem>> = _inventory.asStateFlow()
@@ -42,7 +45,7 @@ class InventoryRepository @Inject constructor(
                 } catch (e: Exception) {
                     failureCount++
                     val backoffDelay = minOf(60_000L * failureCount, 300_000L) // Max 5 min
-                    android.util.Log.e("InventoryRepository", "Auto-refresh failed (attempt $failureCount), retrying in ${backoffDelay/1000}s", e)
+                    Log.e(TAG, "Auto-refresh failed (attempt $failureCount), retrying in ${backoffDelay/1000}s", e)
                     delay(backoffDelay)
                 }
             }
@@ -73,7 +76,7 @@ class InventoryRepository @Inject constructor(
         try {
             val token = sharedPreferences.getString("auth_token", null)
             if (token.isNullOrEmpty()) {
-                println("⚠️ No auth token, skipping inventory sync")
+                if (BuildConfig.DEBUG) Log.w(TAG, "No auth token, skipping inventory sync")
                 return
             }
             
@@ -106,15 +109,16 @@ class InventoryRepository @Inject constructor(
                 
                 if (updatedInventory.isNotEmpty()) {
                     _inventory.value = updatedInventory
-                    println("✅ Updated ${adminProducts.size} inventory items from backend")
-                    println("   Stock: ${updatedInventory.take(3).map { "${it.flavorName}: ${it.totalStock}" }}")
+                    if (BuildConfig.DEBUG) {
+                        Log.d(TAG, "Updated ${adminProducts.size} inventory items from backend")
+                        Log.d(TAG, "Stock: ${updatedInventory.take(3).map { "${it.flavorName}: ${it.totalStock}" }}")
+                    }
                 }
             } else {
-                println("⚠️ Failed to fetch admin products: ${response.code()} ${response.message()}")
+                if (BuildConfig.DEBUG) Log.w(TAG, "Failed to fetch admin products: ${response.code()} ${response.message()}")
             }
         } catch (e: Exception) {
-            println("❌ Error fetching inventory: ${e.message}")
-            android.util.Log.e("InventoryRepository", "Error fetching inventory from backend", e)
+            Log.e(TAG, "Error fetching inventory: ${e.message}", e)
         }
     }
     
@@ -147,7 +151,7 @@ class InventoryRepository @Inject constructor(
         return try {
             val token = sharedPreferences.getString("auth_token", null)
             if (token.isNullOrEmpty()) {
-                println("❌ No auth token for stock update")
+                if (BuildConfig.DEBUG) Log.e(TAG, "No auth token for stock update")
                 return Result.failure(Exception("Not authenticated"))
             }
             
@@ -169,15 +173,15 @@ class InventoryRepository @Inject constructor(
                         item
                     }
                 }
-                println("✅ Stock updated successfully for $flavorId: +$quantity units")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Stock updated successfully for $flavorId: +$quantity units")
                 Result.success(Unit)
             } else {
                 val errorMsg = response.body()?.get("message")?.toString() ?: "Failed to update stock"
-                println("❌ Stock update failed: $errorMsg")
+                if (BuildConfig.DEBUG) Log.e(TAG, "Stock update failed: $errorMsg")
                 Result.failure(Exception(errorMsg))
             }
         } catch (e: Exception) {
-            println("❌ Error updating stock: ${e.message}")
+            Log.e(TAG, "Error updating stock: ${e.message}", e)
             Result.failure(e)
         }
     }
@@ -274,5 +278,9 @@ class InventoryRepository @Inject constructor(
      */
     fun close() {
         repositoryScope.cancel()
+    }
+
+    companion object {
+        private const val TAG = "InventoryRepo"
     }
 }

@@ -23,7 +23,7 @@ class PriceOverrideService(
     fun createPriceOverride(request: CreatePriceOverrideRequest): PriceOverrideResponse {
         // Validate tier
         val tier = RetailerTier.fromString(request.tier)
-            ?: throw IllegalArgumentException("Invalid tier: ${request.tier}. Must be BASIC, SILVER, GOLD, or PLATINUM")
+            ?: throw IllegalArgumentException("Invalid tier: ${request.tier}. Must be BASIC, SILVER, or GOLD")
 
         // Validate product exists
         val product = productRepository.findById(request.productId)

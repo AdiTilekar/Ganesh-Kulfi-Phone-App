@@ -99,16 +99,19 @@ dependencies {
     // Coil for Image Loading
     implementation("io.coil-kt:coil-compose:2.5.0")
     
-    // Room Database
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    // Room Database — currently unused (no @Entity/@Dao defined); uncomment when needed
+    // implementation("androidx.room:room-runtime:2.6.1")
+    // implementation("androidx.room:room-ktx:2.6.1")
+    // ksp("androidx.room:room-compiler:2.6.1")
     
     // DataStore for preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     
-    // Accompanist for Permissions
-    implementation("com.google.accompanist:accompanist-permissions:0.32.0")
+    // EncryptedSharedPreferences for secure token storage
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+    
+    // Accompanist Permissions — currently unused; uncomment when permission handling is added
+    // implementation("com.google.accompanist:accompanist-permissions:0.32.0")
     
     // Firebase & Google Sign-In (Commented out until Firebase is connected)
     // Uncomment these when you're ready to enable OAuth:

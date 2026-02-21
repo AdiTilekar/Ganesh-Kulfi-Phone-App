@@ -9,8 +9,15 @@ import io.ktor.server.plugins.cors.routing.*
  */
 fun Application.configureCORS() {
     install(CORS) {
-        // Allow requests from Android app
-        anyHost() // For development - restrict in production
+        // Read allowed origins from env; fall back to anyHost() for local dev only
+        val allowedOrigins = System.getenv("CORS_ALLOWED_ORIGINS")
+        if (allowedOrigins.isNullOrBlank()) {
+            anyHost() // Local development only — set CORS_ALLOWED_ORIGINS in production
+        } else {
+            allowedOrigins.split(",").map { it.trim() }.forEach { origin ->
+                allowHost(origin.removePrefix("https://").removePrefix("http://"), schemes = listOf("https", "http"))
+            }
+        }
         
         // Allowed HTTP methods
         allowMethod(HttpMethod.Get)

@@ -15,6 +15,10 @@ import io.ktor.server.routing.*
 /**
  * Factory Owner Routes
  * Endpoints for inventory management and product CRUD
+ *
+ * TODO(consistency): This route group uses "/factory" while all other routes
+ *  use the "/api/..." prefix (e.g. "/api/admin/orders"). Migrate to
+ *  "/api/factory" and update Android ApiService endpoints simultaneously.
  */
 fun Route.factoryRoutes(
     productService: ProductService,

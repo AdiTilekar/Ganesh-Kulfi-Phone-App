@@ -14,7 +14,7 @@ object UserRoleMapper {
     )
     
     // Retailer email mappings with their details
-    private val retailerMappings = mapOf(
+    private val retailerMappings = mutableMapOf(
         // Format: email to Retailer Info
         "retailer@test.com" to RetailerInfo(
             id = "ret_001",
@@ -119,7 +119,7 @@ object UserRoleMapper {
     fun addRetailer(email: String, info: RetailerInfo) {
         // Note: This is a temporary in-memory solution
         // In production, store in Firebase/Backend
-        (retailerMappings as MutableMap)[email.lowercase()] = info
+        retailerMappings[email.lowercase()] = info
     }
 }
 

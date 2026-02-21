@@ -5,6 +5,7 @@ import com.ganeshkulfi.app.data.model.Retailer
 import com.ganeshkulfi.app.data.model.PricingTier
 import com.ganeshkulfi.app.data.model.UserRole
 import com.ganeshkulfi.app.data.remote.ApiService
+import com.ganeshkulfi.app.di.ApplicationScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -34,9 +35,9 @@ private fun parseIsoTimestamp(isoString: String?): Long {
 @Singleton
 class RetailerRepository @Inject constructor(
     private val apiService: ApiService,
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    @ApplicationScope private val repositoryScope: CoroutineScope
 ) {
-    private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     
     private val _retailers = MutableStateFlow<List<Retailer>>(emptyList())
     val retailersFlow: Flow<List<Retailer>> = _retailers.asStateFlow()

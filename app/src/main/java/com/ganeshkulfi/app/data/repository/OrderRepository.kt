@@ -1,5 +1,7 @@
 package com.ganeshkulfi.app.data.repository
 
+import android.util.Log
+import com.ganeshkulfi.app.BuildConfig
 import com.ganeshkulfi.app.data.model.Order
 import com.ganeshkulfi.app.data.model.OrderItem
 import com.ganeshkulfi.app.data.model.OrderStatus
@@ -27,35 +29,26 @@ class OrderRepository @Inject constructor(
     suspend fun fetchRetailerOrders(): Result<List<Order>> {
         return withContext(Dispatchers.IO) {
             try {
-                println("🔍 DEBUG: Starting fetchRetailerOrders()")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Starting fetchRetailerOrders()")
                 
                 val token = authRepository.getAuthToken()
                 if (token == null) {
-                    println("❌ DEBUG: No auth token found!")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "No auth token found")
                     return@withContext Result.failure(Exception("Not authenticated"))
                 }
                 
-                println("✅ DEBUG: Token exists (${token.take(20)}...)")
-                println("📥 DEBUG: Calling API: /api/orders/my")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Calling API: /api/orders/my")
                 
                 val response = apiService.getMyOrders("Bearer $token")
                 
-                println("📡 DEBUG: Response code: ${response.code()}")
-                println("📡 DEBUG: Response successful: ${response.isSuccessful}")
-                println("📡 DEBUG: Response body: ${response.body()}")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Response code: ${response.code()}, successful: ${response.isSuccessful}")
                 
                 if (response.isSuccessful && response.body()?.success == true) {
                     val apiOrders = response.body()?.data?.orders ?: emptyList()
-                    println("✅ Fetched ${apiOrders.size} orders from API")
-                    
-                    // Debug: Show first order's retailerId
-                    if (apiOrders.isNotEmpty()) {
-                        println("🔍 First order retailerId from API: ${apiOrders[0].retailerId}")
-                    }
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Fetched ${apiOrders.size} orders from API")
                     
                     // Map API Order to model Order
                     val orders = apiOrders.map { apiOrder ->
-                        println("📦 Mapping order ${apiOrder.id}: retailerId=${apiOrder.retailerId}")
                         Order(
                             id = apiOrder.id,
                             userId = apiOrder.retailerId ?: "",
@@ -98,7 +91,7 @@ class OrderRepository @Inject constructor(
                         )
                     }
                     
-                    println("✅ Mapped ${orders.size} orders to model")
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Mapped ${orders.size} orders to model")
                     
                     // Update local state
                     _orders.value = orders
@@ -106,12 +99,11 @@ class OrderRepository @Inject constructor(
                     Result.success(orders)
                 } else {
                     val errorMsg = response.body()?.message ?: "Failed to fetch orders"
-                    println("❌ Failed to fetch orders: $errorMsg")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "Failed to fetch orders: $errorMsg")
                     Result.failure(Exception(errorMsg))
                 }
             } catch (e: Exception) {
-                println("❌ Exception fetching orders: ${e.message}")
-                android.util.Log.e("OrderRepository", "Exception fetching orders", e)
+                Log.e(TAG, "Exception fetching orders: ${e.message}", e)
                 Result.failure(e)
             }
         }
@@ -124,7 +116,7 @@ class OrderRepository @Inject constructor(
             sdf.timeZone = java.util.TimeZone.getTimeZone("UTC")
             sdf.parse(timestamp)?.time ?: System.currentTimeMillis()
         } catch (e: Exception) {
-            println("⚠️  Failed to parse timestamp: $timestamp - ${e.message}")
+            if (BuildConfig.DEBUG) Log.w(TAG, "Failed to parse timestamp: $timestamp - ${e.message}")
             // Fallback to current time
             System.currentTimeMillis()
         }
@@ -154,22 +146,16 @@ class OrderRepository @Inject constructor(
                     retailerNotes = order.notes
                 )
                 
-                println("📤 Creating order with ${orderItems.size} item types")
-                orderItems.forEach { item ->
-                    println("   - ${item.productName}: qty=${item.quantity}, price=${item.unitPrice}, total=${item.quantity * item.unitPrice}")
-                }
-                println("📋 Full request: items=${request.items.size}, notes=${request.retailerNotes}")
-                println("🔐 Token: ${token.take(30)}...")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Creating order with ${orderItems.size} item types")
                 
                 // Call backend API
-                println("🌐 Calling API: POST /api/orders")
                 val response = apiService.createOrder("Bearer $token", request)
                 
-                println("📡 Response code: ${response.code()}, isSuccessful: ${response.isSuccessful}")
+                if (BuildConfig.DEBUG) Log.d(TAG, "Create order response: ${response.code()}")
                 
                 if (response.isSuccessful && response.body()?.success == true) {
                     val orderData = response.body()?.data
-                    println("✅ Order created: ${orderData?.orderNumber}")
+                    if (BuildConfig.DEBUG) Log.d(TAG, "Order created: ${orderData?.orderNumber}")
                     
                     // Refresh orders list
                     fetchRetailerOrders()
@@ -178,12 +164,11 @@ class OrderRepository @Inject constructor(
                 } else {
                     val errorBody = response.errorBody()?.string()
                     val errorMsg = response.body()?.message ?: errorBody ?: "Failed to create order (code: ${response.code()})"
-                    println("❌ Order creation failed: $errorMsg")
+                    if (BuildConfig.DEBUG) Log.e(TAG, "Order creation failed: $errorMsg")
                     Result.failure(Exception(errorMsg))
                 }
             } catch (e: Exception) {
-                println("❌ Exception creating order: ${e.message}")
-                android.util.Log.e("OrderRepository", "Exception creating order", e)
+                Log.e(TAG, "Exception creating order: ${e.message}", e)
                 Result.failure(e)
             }
         }
@@ -236,12 +221,9 @@ class OrderRepository @Inject constructor(
 
     fun getRetailerOrdersFlow(userId: String): Flow<List<Order>> {
         return ordersFlow.map { orders ->
-            println("🔍 Filtering ${orders.size} orders for userId: $userId")
-            val filtered = orders.filter { 
-                println("   Order ${it.id}: userId=${it.userId}")
-                it.userId == userId 
-            }
-            println("✅ Found ${filtered.size} orders for this user")
+            if (BuildConfig.DEBUG) Log.d(TAG, "Filtering ${orders.size} orders for userId: $userId")
+            val filtered = orders.filter { it.userId == userId }
+            if (BuildConfig.DEBUG) Log.d(TAG, "Found ${filtered.size} orders for this user")
             filtered.sortedByDescending { it.createdAt }
         }
     }
@@ -272,5 +254,9 @@ class OrderRepository @Inject constructor(
 
     suspend fun getPendingOrderCount(): Int {
         return _orders.value.count { it.status == OrderStatus.PENDING }
+    }
+
+    companion object {
+        private const val TAG = "OrderRepository"
     }
 }

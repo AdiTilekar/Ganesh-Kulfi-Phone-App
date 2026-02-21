@@ -92,9 +92,15 @@ class UserService(
         // Hash password
         val passwordHash = passwordService.hashPassword(request.password)
         
-        // Convert role string to enum
+        // SECURITY: Self-registration is restricted to CUSTOMER or RETAILER only.
+        // ADMIN accounts can only be created by an existing admin via createUser().
+        val allowedSelfRegisterRoles = setOf(UserRole.CUSTOMER, UserRole.RETAILER)
         val userRole = try {
-            UserRole.valueOf(request.role.uppercase())
+            val requested = UserRole.valueOf(request.role.uppercase())
+            if (requested !in allowedSelfRegisterRoles) {
+                return Result.failure(IllegalArgumentException("Cannot self-register as ${requested.name}. Contact an administrator."))
+            }
+            requested
         } catch (e: IllegalArgumentException) {
             UserRole.CUSTOMER  // Default to CUSTOMER if invalid role
         }
@@ -188,7 +194,7 @@ class UserService(
         // Convert tier string to RetailerTier if provided (Day 9)
         val retailerTier = request.tier?.let {
             RetailerTier.fromString(it) ?: return Result.failure(
-                IllegalArgumentException("Invalid tier: $it. Must be BASIC, SILVER, GOLD, or PLATINUM")
+                IllegalArgumentException("Invalid tier: $it. Must be BASIC, SILVER, or GOLD")
             )
         }?.name ?: "BASIC"
         
@@ -251,7 +257,7 @@ class UserService(
         // Convert tier string to RetailerTier if provided (Day 9)
         request.tier?.let { tierStr ->
             val retailerTier = RetailerTier.fromString(tierStr)
-                ?: return Result.failure(IllegalArgumentException("Invalid tier: $tierStr. Must be BASIC, SILVER, GOLD, or PLATINUM"))
+                ?: return Result.failure(IllegalArgumentException("Invalid tier: $tierStr. Must be BASIC, SILVER, or GOLD"))
             updates["tier"] = retailerTier.name
         }
         

@@ -22,6 +22,8 @@ enum class ProductCategory {
 enum class ProductStatus {
     AVAILABLE,
     OUT_OF_STOCK,
+
+    @Deprecated("DISCONTINUED is defined but never set by any code path. Add a route/service to use it or remove.")
     DISCONTINUED
 }
 

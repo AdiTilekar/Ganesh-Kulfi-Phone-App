@@ -2,7 +2,9 @@ package com.ganeshkulfi.backend.plugins
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
+import com.ganeshkulfi.backend.data.dto.ErrorResponse
 import com.ganeshkulfi.backend.services.JWTService
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -33,10 +35,9 @@ fun Application.configureAuthentication(jwtService: JWTService) {
             }
             
             challenge { _, _ ->
-                call.respondText(
-                    """{"success": false, "message": "Token is not valid or has expired"}""",
-                    status = io.ktor.http.HttpStatusCode.Unauthorized,
-                    contentType = io.ktor.http.ContentType.Application.Json
+                call.respond(
+                    HttpStatusCode.Unauthorized,
+                    ErrorResponse("Token is not valid or has expired")
                 )
             }
         }

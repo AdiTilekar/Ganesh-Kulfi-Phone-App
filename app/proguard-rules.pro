@@ -73,6 +73,11 @@
 -keep class * extends dagger.hilt.android.internal.managers.ViewComponentManager$FragmentContextWrapper { *; }
 -keep class dagger.hilt.** { *; }
 
+# ==================== ENCRYPTED SHARED PREFERENCES ====================
+-keep class androidx.security.crypto.** { *; }
+-keepclassmembers class com.google.crypto.tink.** { *; }
+-dontwarn com.google.crypto.tink.**
+
 # Keep Hilt generated classes
 -keep class **_HiltModules { *; }
 -keep class **_HiltModules$** { *; }

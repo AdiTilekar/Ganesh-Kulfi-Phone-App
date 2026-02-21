@@ -37,8 +37,11 @@ enum class OrderStatus {
     CANCELLED,        // Order cancelled by retailer
     CANCELLED_ADMIN,  // Order cancelled by admin
     
-    // Legacy statuses for backward compatibility (map to new ones)
-    PREPARING,        // Maps to PACKED
-    READY,            // Maps to PACKED
-    DISPATCHED        // Maps to OUT_FOR_DELIVERY
+    // Legacy statuses for backward compatibility — backend no longer produces these
+    @Deprecated("Backend never sends PREPARING; kept only for old cached data")
+    PREPARING,
+    @Deprecated("Backend never sends READY; kept only for old cached data")
+    READY,
+    @Deprecated("Backend never sends DISPATCHED; kept only for old cached data")
+    DISPATCHED
 }
