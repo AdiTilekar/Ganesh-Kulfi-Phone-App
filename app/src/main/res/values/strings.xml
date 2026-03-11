@@ -34,4 +34,34 @@
     <string name="sign_out">Sign Out</string>
     <string name="loading">Loading...</string>
     <string name="error">Error</string>
+    <string name="back">Back</string>
+    <string name="retry">Retry</string>
+
+    <!-- Daily Sales Log -->
+    <string name="sale_entry_title">Record Sale</string>
+    <string name="sale_entry_section_product">Product Details</string>
+    <string name="sale_select_product">Select a product…</string>
+    <string name="sale_product_label">Product</string>
+    <string name="sale_cost_price_label">Cost Price (factory)</string>
+    <string name="sale_cost_price_hint">Set by admin — read only</string>
+    <string name="sale_quantity_label">Quantity</string>
+    <string name="sale_sell_price_label">Sell Price per unit</string>
+    <string name="sale_profit_preview">Estimated Profit</string>
+    <string name="sale_payment_method_label">Payment Method</string>
+    <string name="sale_note_label">Note (optional)</string>
+    <string name="sale_note_placeholder">e.g. bulk discount given</string>
+    <string name="sale_submit_button">Record Sale</string>
+    <string name="sale_add_button">Add Sale</string>
+    <string name="sale_pick_date">Pick date</string>
+    <string name="sale_download_excel">Download Excel</string>
+    <string name="sale_export_saved">Saved to: %1$s</string>
+
+    <string name="daily_sales_title">Daily Sales Log</string>
+    <string name="daily_sales_total_revenue">Total Revenue</string>
+    <string name="daily_sales_total_cost">Total Cost</string>
+    <string name="daily_sales_total_profit">Total Profit</string>
+    <string name="daily_sales_units_sold">Units Sold</string>
+    <string name="daily_sales_total_products">Total Products</string>
+    <string name="daily_sales_transactions_header">Transactions</string>
+    <string name="daily_sales_empty">No sales recorded for this day</string>
 </resources>

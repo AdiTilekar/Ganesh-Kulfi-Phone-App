@@ -1,0 +1,62 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Warm toffee background -->
+    <path
+        android:fillColor="#FFF3CD"
+        android:pathData="M0,0h200v200h-200z"/>
+
+    <!-- Kulfi body – butterscotch amber -->
+    <path
+        android:fillColor="#F5A623"
+        android:pathData="M60,28 Q60,22 100,22 Q140,22 140,28 L146,132 Q136,157 100,160 Q64,157 54,132 Z"/>
+
+    <!-- Caramel dark swirl left -->
+    <path
+        android:fillColor="#7B4E0A"
+        android:fillAlpha="0.45"
+        android:pathData="M80,26 Q84,68 82,108 Q81,128 79,140 Q75,128 74,108 Q72,68 76,26 Z"/>
+
+    <!-- Caramel dark swirl right -->
+    <path
+        android:fillColor="#7B4E0A"
+        android:fillAlpha="0.45"
+        android:pathData="M114,24 Q120,66 118,106 Q117,126 115,138 Q111,126 110,106 Q108,66 110,24 Z"/>
+
+    <!-- Butterscotch glaze top -->
+    <path
+        android:fillColor="#C47B04"
+        android:pathData="M63,28 Q100,18 137,28 Q130,41 100,44 Q70,41 63,28 Z"/>
+
+    <!-- Toffee drips -->
+    <path
+        android:fillColor="#A0520A"
+        android:fillAlpha="0.6"
+        android:pathData="M85,44 Q88,54 86,62 Q83,54 85,44 Z"/>
+    <path
+        android:fillColor="#A0520A"
+        android:fillAlpha="0.6"
+        android:pathData="M110,42 Q113,52 111,60 Q108,52 110,42 Z"/>
+
+    <!-- Crushed nut sprinkles -->
+    <path android:fillColor="#5D4037" android:pathData="M87,30 L91,30 L91,34 L87,34 Z"/>
+    <path android:fillColor="#5D4037" android:pathData="M108,28 L112,28 L112,32 L108,32 Z"/>
+    <path android:fillColor="#5D4037" android:pathData="M97,25 L101,25 L101,29 L97,29 Z"/>
+    <path android:fillColor="#795548" android:pathData="M79,34 L83,34 L83,37 L79,37 Z"/>
+    <path android:fillColor="#795548" android:pathData="M116,33 L120,33 L120,36 L116,36 Z"/>
+
+    <!-- Stick -->
+    <path
+        android:fillColor="#8D6E63"
+        android:pathData="M94,155 L106,155 L106,190 L94,190 Z"/>
+
+    <!-- Shine highlight -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.28"
+        android:pathData="M66,30 L76,30 Q73,92 70,130 L60,120 Q58,82 62,46 Z"/>
+
+</vector>

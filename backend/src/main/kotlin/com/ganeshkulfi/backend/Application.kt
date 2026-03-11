@@ -9,6 +9,7 @@ import com.ganeshkulfi.backend.data.repository.OrderTimelineRepository
 import com.ganeshkulfi.backend.data.repository.PriceOverrideRepository
 import com.ganeshkulfi.backend.data.repository.StatusHistoryRepository
 import com.ganeshkulfi.backend.data.repository.AnalyticsRepository
+import com.ganeshkulfi.backend.data.repository.SaleRepository
 import com.ganeshkulfi.backend.plugins.*
 import com.ganeshkulfi.backend.routes.*
 import com.ganeshkulfi.backend.services.*
@@ -87,6 +88,9 @@ fun Application.module() {
     // Day 12: Enhanced Analytics Dashboard
     val analyticsRepository = AnalyticsRepository()
     val analyticsService = AnalyticsService(orderRepository, productRepository, analyticsRepository)
+
+    // Daily Sales Log (V21)
+    val saleRepository = SaleRepository()
     
     // Configure plugins
     log.info("🔧 Configuring Ktor plugins...")
@@ -111,6 +115,7 @@ fun Application.module() {
         factoryOrderStatusRoutes(orderService, orderRepository, orderTimelineRepository, userRepository, notificationService, productRepository) // Day 11: Order Status with Logging + Auto Stock Reduction
         orderPollingRoutes(orderRepository, orderTimelineRepository) // Day 11: Order polling for updates
         analyticsRoutes(analyticsService) // Day 12: Enhanced Analytics Dashboard
+        saleRoutes(saleRepository, productRepository) // V21: Daily Sales Log
     }
     
     log.info("✅ Ganesh Kulfi Backend is ready!")

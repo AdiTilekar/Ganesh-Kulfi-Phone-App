@@ -95,6 +95,27 @@ interface ApiService {
         @Path("id") productId: String,
         @Body request: Map<String, Int>
     ): Response<Map<String, Any>>
+
+    // ── Daily Sales Log ────────────────────────────────────────────────────
+
+    @POST("/api/sales")
+    suspend fun createSale(
+        @Header("Authorization") token: String,
+        @Body request: CreateSaleRequest
+    ): Response<ApiResponse<SaleResponse>>
+
+    @GET("/api/sales")
+    suspend fun getSalesForDate(
+        @Header("Authorization") token: String,
+        @Query("date") date: String
+    ): Response<ApiResponse<DailySalesSummaryResponse>>
+
+    @Streaming
+    @GET("/api/sales/export")
+    suspend fun exportSales(
+        @Header("Authorization") token: String,
+        @Query("date") date: String
+    ): Response<okhttp3.ResponseBody>
 }
 
 // DTOs
@@ -283,4 +304,38 @@ data class OrderResponse(
     val paymentStatus: String,
     val createdAt: String,
     val updatedAt: String
+)
+
+// ── Daily Sales DTOs ──────────────────────────────────────────────────────────
+
+data class CreateSaleRequest(
+    val productId: String,
+    val quantity: Int,
+    val sellPrice: Double,
+    val paymentMethod: String = "CASH",   // CASH | UPI | CREDIT
+    val note: String? = null,
+    val idempotencyKey: String? = null
+)
+
+data class SaleResponse(
+    val id: String,
+    val userId: String,
+    val productId: String,
+    val productName: String,
+    val quantity: Int,
+    val costPrice: Double,
+    val sellPrice: Double,
+    val profit: Double,
+    val paymentMethod: String,
+    val note: String? = null,
+    val soldAt: String
+)
+
+data class DailySalesSummaryResponse(
+    val date: String,
+    val sales: List<SaleResponse>,
+    val totalRevenue: Double,
+    val totalCost: Double,
+    val totalProfit: Double,
+    val totalUnits: Int
 )

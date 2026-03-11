@@ -1,0 +1,64 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Warm cream background -->
+    <path
+        android:fillColor="#FFF8E7"
+        android:pathData="M0,0h200v200h-200z"/>
+
+    <!-- Kulfi body – golden saffron cream -->
+    <path
+        android:fillColor="#F4D03F"
+        android:pathData="M60,28 Q60,22 100,22 Q140,22 140,28 L146,132 Q136,157 100,160 Q64,157 54,132 Z"/>
+
+    <!-- Saffron orange tint overlay -->
+    <path
+        android:fillColor="#E67E22"
+        android:fillAlpha="0.18"
+        android:pathData="M60,28 Q60,22 100,22 Q140,22 140,28 L146,132 Q136,157 100,160 Q64,157 54,132 Z"/>
+
+    <!-- Rabdi cream layer stripes -->
+    <path
+        android:fillColor="#FDFAF0"
+        android:fillAlpha="0.75"
+        android:pathData="M68,50 Q100,44 132,50 L130,62 Q100,56 70,62 Z"/>
+    <path
+        android:fillColor="#FDFAF0"
+        android:fillAlpha="0.65"
+        android:pathData="M65,78 Q100,72 135,78 L133,90 Q100,84 67,90 Z"/>
+    <path
+        android:fillColor="#FDFAF0"
+        android:fillAlpha="0.55"
+        android:pathData="M63,106 Q100,100 137,106 L135,116 Q100,110 65,116 Z"/>
+
+    <!-- Rich gold topping -->
+    <path
+        android:fillColor="#D4AC0D"
+        android:pathData="M64,28 Q100,18 136,28 Q128,40 100,43 Q72,40 64,28 Z"/>
+
+    <!-- Saffron strand decorations -->
+    <path
+        android:fillColor="#E67E22"
+        android:pathData="M90,24 Q92,28 90,32 Q88,28 90,24 Z"/>
+    <path
+        android:fillColor="#E67E22"
+        android:pathData="M100,22 Q102,26 100,30 Q98,26 100,22 Z"/>
+    <path
+        android:fillColor="#E67E22"
+        android:pathData="M110,24 Q112,28 110,32 Q108,28 110,24 Z"/>
+
+    <!-- Stick -->
+    <path
+        android:fillColor="#8D6E63"
+        android:pathData="M94,155 L106,155 L106,190 L94,190 Z"/>
+
+    <!-- Shine highlight -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.30"
+        android:pathData="M66,30 L76,30 Q73,92 70,130 L60,120 Q58,82 62,46 Z"/>
+
+</vector>

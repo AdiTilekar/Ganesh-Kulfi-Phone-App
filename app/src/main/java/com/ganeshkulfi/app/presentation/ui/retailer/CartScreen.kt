@@ -596,6 +596,9 @@ private fun getDrawableResourceIdFromName(productName: String): String {
         productName.contains("Shitafal", ignoreCase = true) || productName.contains("Sitafal", ignoreCase = true) -> "sitafal_kulfi"
         productName.contains("Dry Fruit", ignoreCase = true) || productName.contains("Dryfruit", ignoreCase = true) -> "dry_fruit_kulfi"
         productName.contains("Gulkand", ignoreCase = true) -> "gulkand_kulfi"
+        productName.contains("Special Rabdi", ignoreCase = true) -> "special_rabdi_kulfi"
+        productName.contains("Butterscotch", ignoreCase = true) -> "butterscotch_kulfi"
+        productName.contains("Pista", ignoreCase = true) -> "pista_kulfi"
         else -> "logo"
     }
 }

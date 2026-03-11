@@ -34,4 +34,34 @@
     <string name="sign_out">साइन आउट करा</string>
     <string name="loading">लोड होत आहे...</string>
     <string name="error">त्रुटी</string>
+    <string name="back">मागे</string>
+    <string name="retry">पुन्हा प्रयत्न करा</string>
+
+    <!-- Daily Sales Log -->
+    <string name="sale_entry_title">विक्री नोंदवा</string>
+    <string name="sale_entry_section_product">उत्पादन तपशील</string>
+    <string name="sale_select_product">उत्पादन निवडा…</string>
+    <string name="sale_product_label">उत्पादन</string>
+    <string name="sale_cost_price_label">किंमत (कारखाना)</string>
+    <string name="sale_cost_price_hint">प्रशासकाने ठरवलेले — फक्त वाचा</string>
+    <string name="sale_quantity_label">प्रमाण</string>
+    <string name="sale_sell_price_label">विक्री किंमत प्रति नग</string>
+    <string name="sale_profit_preview">अंदाजे नफा</string>
+    <string name="sale_payment_method_label">पेमेंट पद्धत</string>
+    <string name="sale_note_label">नोंद (ऐच्छिक)</string>
+    <string name="sale_note_placeholder">उदा. घाऊक सूट दिली</string>
+    <string name="sale_submit_button">विक्री नोंदवा</string>
+    <string name="sale_add_button">विक्री जोडा</string>
+    <string name="sale_pick_date">तारीख निवडा</string>
+    <string name="sale_download_excel">Excel डाउनलोड करा</string>
+    <string name="sale_export_saved">जतन केले: %1$s</string>
+
+    <string name="daily_sales_title">दैनंदिन विक्री नोंद</string>
+    <string name="daily_sales_total_revenue">एकूण महसूल</string>
+    <string name="daily_sales_total_cost">एकूण खर्च</string>
+    <string name="daily_sales_total_profit">एकूण नफा</string>
+    <string name="daily_sales_units_sold">विकलेल्या नगा</string>
+    <string name="daily_sales_total_products">एकूण उत्पादने</string>
+    <string name="daily_sales_transactions_header">व्यवहार</string>
+    <string name="daily_sales_empty">या दिवशी कोणतीही विक्री नोंदवली नाही</string>
 </resources>

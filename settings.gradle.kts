@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Kulfi Delight"
 include(":app")
+include(":salelog")

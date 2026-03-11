@@ -26,15 +26,6 @@ android {
     }
 
     buildTypes {
-        debug {
-            isMinifyEnabled = false  // Disabled for easier debugging
-            isShrinkResources = false
-            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8080\"")
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
         release {
             isMinifyEnabled = true
             isShrinkResources = false  // Disabled due to launcher icon issues
@@ -46,6 +37,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
@@ -71,6 +63,9 @@ dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.1")
+
+    // Java 8+ API desugaring (required for java.time on API 24-25)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     
     // Jetpack Compose
     implementation(platform("androidx.compose:compose-bom:2023.10.01"))
@@ -126,8 +121,6 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.10.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 
 /**

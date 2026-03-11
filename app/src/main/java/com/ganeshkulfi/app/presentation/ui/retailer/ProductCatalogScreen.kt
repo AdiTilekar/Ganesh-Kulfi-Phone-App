@@ -581,6 +581,9 @@ private fun getDrawableResourceId(flavorId: String): String {
         "shitafal", "sitafal", "custard_apple" -> "sitafal_kulfi"
         "dry_fruit", "dryfruit" -> "dry_fruit_kulfi"
         "gulkand" -> "gulkand_kulfi"
+        "special_rabdi" -> "special_rabdi_kulfi"
+        "butterscotch" -> "butterscotch_kulfi"
+        "pista" -> "pista_kulfi"
         else -> "logo"
     }
 }

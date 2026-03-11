@@ -34,4 +34,34 @@
     <string name="sign_out">साइन आउट करें</string>
     <string name="loading">लोड हो रहा है...</string>
     <string name="error">त्रुटि</string>
+    <string name="back">वापस</string>
+    <string name="retry">पुनः प्रयास</string>
+
+    <!-- Daily Sales Log -->
+    <string name="sale_entry_title">बिक्री दर्ज करें</string>
+    <string name="sale_entry_section_product">उत्पाद विवरण</string>
+    <string name="sale_select_product">उत्पाद चुनें…</string>
+    <string name="sale_product_label">उत्पाद</string>
+    <string name="sale_cost_price_label">लागत मूल्य (फैक्ट्री)</string>
+    <string name="sale_cost_price_hint">व्यवस्थापक द्वारा निर्धारित — केवल पढ़ें</string>
+    <string name="sale_quantity_label">मात्रा</string>
+    <string name="sale_sell_price_label">बिक्री मूल्य प्रति इकाई</string>
+    <string name="sale_profit_preview">अनुमानित लाभ</string>
+    <string name="sale_payment_method_label">भुगतान विधि</string>
+    <string name="sale_note_label">नोट (वैकल्पिक)</string>
+    <string name="sale_note_placeholder">जैसे थोक छूट दी</string>
+    <string name="sale_submit_button">बिक्री दर्ज करें</string>
+    <string name="sale_add_button">बिक्री जोड़ें</string>
+    <string name="sale_pick_date">तारीख चुनें</string>
+    <string name="sale_download_excel">Excel डाउनलोड करें</string>
+    <string name="sale_export_saved">सहेजा गया: %1$s</string>
+
+    <string name="daily_sales_title">दैनिक बिक्री लॉग</string>
+    <string name="daily_sales_total_revenue">कुल राजस्व</string>
+    <string name="daily_sales_total_cost">कुल लागत</string>
+    <string name="daily_sales_total_profit">कुल लाभ</string>
+    <string name="daily_sales_units_sold">बेची गई इकाइयाँ</string>
+    <string name="daily_sales_total_products">कुल उत्पाद</string>
+    <string name="daily_sales_transactions_header">लेनदेन</string>
+    <string name="daily_sales_empty">इस दिन कोई बिक्री दर्ज नहीं</string>
 </resources>

@@ -26,6 +26,8 @@ import com.ganeshkulfi.app.presentation.ui.admin.InventoryManagementScreen
 import com.ganeshkulfi.app.presentation.ui.admin.RetailerManagementScreen
 import com.ganeshkulfi.app.presentation.screens.PricingManagementScreen
 import com.ganeshkulfi.app.presentation.screens.ReportsAnalyticsScreen
+import com.ganeshkulfi.app.presentation.screens.SaleEntryScreen
+import com.ganeshkulfi.app.presentation.screens.DailySalesScreen
 import com.ganeshkulfi.app.presentation.viewmodel.AuthViewModel
 import com.ganeshkulfi.app.presentation.viewmodel.CartViewModel
 import kotlinx.coroutines.launch
@@ -355,6 +357,26 @@ fun NavGraph(
                 onNavigateBack = {
                     navController.popBackStack()
                 }
+            )
+        }
+
+        // ── Daily Sales Log screens ─────────────────────────────────────────
+
+        composable(Screen.SaleEntry.route) {
+            SaleEntryScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onSaleRecorded = {
+                    navController.navigate(Screen.DailySales.route) {
+                        popUpTo(Screen.SaleEntry.route) { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        composable(Screen.DailySales.route) {
+            DailySalesScreen(
+                onNavigateBack  = { navController.popBackStack() },
+                onAddSaleClick  = { navController.navigate(Screen.SaleEntry.route) }
             )
         }
     }

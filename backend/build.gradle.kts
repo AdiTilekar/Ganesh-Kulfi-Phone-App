@@ -78,7 +78,10 @@ dependencies {
     
     // HikariCP Connection Pool
     implementation("com.zaxxer:HikariCP:5.1.0")
-    
+
+    // Apache POI — Excel (.xlsx) generation for daily sales reports
+    implementation("org.apache.poi:poi-ooxml:5.2.5")
+
     // Logging
     implementation("ch.qos.logback:logback-classic:1.4.14")
     

@@ -194,6 +194,45 @@ data class Flavor(
                 tags = listOf("Premium", "Exotic"),
                 price = 38,
                 stock = 45
+            ),
+            Flavor(
+                key = "special_rabdi",
+                nameEn = "Special Rabdi Kulfi",
+                nameHi = "स्पेशल रबड़ी कुल्फी",
+                nameMr = "स्पेशल रबडी कुल्फी",
+                descriptionEn = "Indulgent special rabdi kulfi loaded with thick malai and saffron.",
+                descriptionHi = "गाढ़ी मलाई और केसर से भरपूर स्पेशल रबड़ी कुल्फी।",
+                descriptionMr = "जाड मलई आणि केशराने भरलेली स्पेशल रबडी कुल्फी.",
+                image = "special_rabdi_kulfi.png",
+                tags = listOf("Premium", "Traditional", "Special"),
+                price = 35,
+                stock = 60
+            ),
+            Flavor(
+                key = "butterscotch",
+                nameEn = "Butterscotch Kulfi",
+                nameHi = "बटरस्कॉच कुल्फी",
+                nameMr = "बटरस्कॉच कुल्फी",
+                descriptionEn = "Buttery caramel kulfi with a rich, velvety butterscotch flavour.",
+                descriptionHi = "मक्खन जैसे कारमेल के साथ मलाईदार बटरस्कॉच कुल्फी।",
+                descriptionMr = "बटरी कारमेलसह मलईदार बटरस्कॉच कुल्फी.",
+                image = "butterscotch_kulfi.png",
+                tags = listOf("Modern", "Rich", "Caramel"),
+                price = 30,
+                stock = 75
+            ),
+            Flavor(
+                key = "pista",
+                nameEn = "Pista Kulfi",
+                nameHi = "पिस्ता कुल्फी",
+                nameMr = "पिस्ता कुल्फी",
+                descriptionEn = "Classic pistachio kulfi enriched with real pista and cream.",
+                descriptionHi = "असली पिस्ता और मलाई से भरपूर क्लासिक पिस्ता कुल्फी।",
+                descriptionMr = "खरा पिस्ता आणि मलाईने समृद्ध क्लासिक पिस्ता कुल्फी.",
+                image = "pista_kulfi.png",
+                tags = listOf("Classic", "Nuts", "Premium"),
+                price = 32,
+                stock = 70
             )
         )
     }
